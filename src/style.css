@@ -1,0 +1,14 @@
+  .estampa-frente{
+    position: relative;
+    z-index: 2;
+    max-width: 120px;
+    left: -125%;
+    bottom: 50px;
+  }
+  .estampa-costas{
+    position: relative;
+    z-index: 2;
+    max-width: 120px;
+    left: 123%;
+    bottom: 50px;
+  }
