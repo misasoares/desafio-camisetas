@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const apiService = axios.create({
-	baseURL: 'https://01cb-131-0-230-79.ngrok-free.app/',
+	baseURL: 'https://api-camisetas.onrender.com/',
 });
 
 export default apiService;

@@ -2,44 +2,16 @@
   position: relative;
   z-index: 2;
   max-width: 120px;
-  left: -125%;
+  left: -140%;
   bottom: 50px;
 }
 .estampa-costas {
   position: relative;
   z-index: 2;
   max-width: 120px;
-  left: 123%;
+  left: 140%;
   bottom: 50px;
 }
-
-/* .tshirt-container {
-  position: relative;
-}
-
-.tshirt-image {
-  width: 100%;
-  height: auto;
-  
-
-  
-} */
-
-/* .color-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: blue; 
-  mix-blend-mode: multiply;
-  mask-size: cover;
-  mask-mode: alpha;
-  -webkit-mask-image: url("./frentesvg.svg");
-  mask-image: url("./frentesvg.svg");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-} */
 
 
 .tshirt-container {
@@ -64,13 +36,3 @@
 }
 
 
-
-.color-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(123, 45, 45); /* esse tem qure mudar */
-  mix-blend-mode: multiply;
-}
