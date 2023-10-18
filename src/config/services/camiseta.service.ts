@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import apiService from "./api.service";
 
-interface CamisetaDto {
+export interface CamisetaDto {
   nome: string;
   cor: string;
   modelo: string;
   estampaCostas: string;
   estampaFrontal: string;
   tags: string;
+  index?:any
 }
 
 export async function create(objCamiseta: CamisetaDto) {
@@ -20,5 +22,15 @@ export async function create(objCamiseta: CamisetaDto) {
     return resposta.data;
   } catch (error) {
     throw new Error();
+  }
+}
+
+export async function listAll(){
+  try {
+    const resposta = await apiService.get('/')
+
+    return resposta.data
+  } catch (error) {
+    throw new Error()
   }
 }
