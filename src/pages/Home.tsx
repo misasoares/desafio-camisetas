@@ -6,7 +6,6 @@ import SendIcon from "@mui/icons-material/Send";
 import { useState } from "react";
 import { create } from "../config/services/camiseta.service";
 import "../style.css";
-import frente from "../assets/camisetabrancafrente.png";
 
 function Home() {
   const [camiseta, setCamiseta] = useState({
@@ -48,15 +47,19 @@ function Home() {
           <div style={{position:"absolute"}}>
             <img className="estampa-costas" src={camiseta.estampaCostas} alt="" />
           </div>
-          <div className="tshirt-container2">
-            <img className="tshirt-image" src={frente} alt="Descrição da imagem" style={{ maxWidth: "300px" }} />
-            <img
-              className="tshirt-image"
-              src="https://cdn.discordapp.com/attachments/1073355866000085042/1163977934885892167/camisetabrancacostas.png?ex=654189ed&is=652f14ed&hm=b85eed856a95adf6e48190420d8bd10762c9c2be08e9ba57c9062bb72cc0a3b5&"
-              alt="Descrição da imagem"
-              style={{ maxWidth: "300px" }}
-            />
+
+          
+
+          <div className="tshirt-container">
+          <div className="color-overlay"></div>
+          
           </div>
+
+             <div className="tshirt-container costas">
+          <div className="color-overlay"></div>
+          
+          </div>
+          
         </Box>
 
         <form>
