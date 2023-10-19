@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -9,44 +10,52 @@ import Typography from "@mui/material/Typography";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { CamisetaDto, listAll } from "../config/services/camiseta.service";
 import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import styled from "styled-components";
 
 function List() {
+  const [backgroundColor, setBackgroundColor] = useState("#fffffff");
   const [expanded, setExpanded] = useState(false);
   const [camisetas, setCamisetas] = useState<CamisetaDto[]>([]);
+
+  const ChangeColorStyled = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: ${backgroundColor};
+    mix-blend-mode: multiply;
+  `;
 
   useEffect(() => {
     async function buscaDados() {
       const resposta = await listAll();
-
       setCamisetas(resposta);
     }
 
     buscaDados();
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleExpandClick = (index:any) => {
-    console.log(expanded)
-    setExpanded(!expanded)
+  const handleExpandClick = (index: any) => {
+    setExpanded((prevExpanded: any) => {
+      console.log(prevExpanded);
+      return {
+        ...prevExpanded,
+        [index]: !prevExpanded[index],
+      };
+    });
   };
 
+
   return (
-    <>
+    <Box display={"flex"} flexDirection={"column"} alignItems={"center"} width={"100vw"}>
       <h1>lista das camisetas</h1>
 
-      {camisetas.map((camiseta, index) => (
-        <>
-          <Card key={index} sx={{ maxWidth: 345 }}>
-            <CardMedia
-            expand={expanded}
-              onClick={()=>handleExpandClick(index)}
-              aria-expanded={expanded}
-              aria-label="show more"
-              component="img"
-              height="194"
-              image="src\assets\aquivaiacamiseta.png"
-              alt="CardImage"
-            />
+      <Box display={"flex"} flexWrap={"wrap"} gap={5} alignItems={"center"} justifyContent={"center"}>
+        {camisetas.map((camiseta, index) => (
+          <Card key={index} sx={{ width: 345 }}>
+            <CardMedia onClick={() => handleExpandClick(index)} aria-expanded={expanded[index]} aria-label="show more" component="img" height="194" image={camisetas[index].estampaFrontal} alt="CardImage"></CardMedia> 
 
             <CardHeader title={camiseta.nome} subheader={camiseta.modelo} />
 
@@ -56,7 +65,7 @@ function List() {
               </IconButton>
             </CardActions>
 
-            <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <Collapse in={expanded[index]} timeout="auto" unmountOnExit>
               <CardContent>
                 <Typography paragraph>Detalhes:</Typography>
                 <Typography paragraph>{camiseta.cor}</Typography>
@@ -66,9 +75,9 @@ function List() {
               </CardContent>
             </Collapse>
           </Card>
-        </>
-      ))}
-    </>
+        ))}
+      </Box>
+    </Box>
   );
 }
 

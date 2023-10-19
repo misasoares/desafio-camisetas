@@ -8,7 +8,7 @@ export interface CamisetaDto {
   estampaCostas: string;
   estampaFrontal: string;
   tags: string;
-  index?:any
+
 }
 
 export async function create(objCamiseta: CamisetaDto) {
