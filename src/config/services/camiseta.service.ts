@@ -2,6 +2,7 @@
 import apiService from "./api.service";
 
 export interface CamisetaDto {
+
   nome: string;
   cor: string;
   modelo: string;

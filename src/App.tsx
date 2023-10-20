@@ -1,15 +1,14 @@
-import RoutesApp from "./routes/RoutesApp"
+import RoutesApp from "./routes/RoutesApp";
 
 
 
 function App() {
-
-
   return (
     <>
-      <RoutesApp/>
+    
+      <RoutesApp />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
