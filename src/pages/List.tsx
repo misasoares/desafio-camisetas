@@ -1,135 +1,170 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Box, TextField, IconButton } from "@mui/material";
 import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
 import Collapse from "@mui/material/Collapse";
 import Typography from "@mui/material/Typography";
-import { CamisetaDto, listAll } from "../config/services/camiseta.service";
 import { useEffect, useState } from "react";
-import { Box, Button, TextField } from "@mui/material";
-import CamisetaFrontal from "../components/camiseta/CamisetaFrontal";
-import CamisetaCostas from "../components/camiseta/CamisetaCostas";
-import SendIcon from "@mui/icons-material/Send";
+import Camiseta from "../components/camiseta/Camiseta";
+import DeleteIcon from "@mui/icons-material/Delete";
 
+interface CamisetaDto {
+  nome: string;
+  cor: string;
+  modelo: string;
+  estampaCostas: string;
+  estampaFrontal: string;
+  tags: string;
+}
 
 function List() {
   const [expanded, setExpanded] = useState<{ [index: number]: boolean }>({});
   const [camisetas, setCamisetas] = useState<CamisetaDto[]>([]);
-  const [showCamisetaCostas, setShowCamisetaCostas] = useState<{ [index: number]: boolean }>({});
-  const [search, setSearch] = useState<string>('');
+  const [showCamisetaCostas, setShowCamisetaCostas] = useState<{
+    [index: number]: boolean;
+  }>({});
+  const [search, setSearch] = useState<string>("");
   const [filteredCamisetas, setFilteredCamisetas] = useState<CamisetaDto[]>([]);
 
-  useEffect(() => {
-    async function buscaDados() {
-      const resposta = await listAll();
-      setCamisetas(resposta);
-    }
-console.log('-----')
-    buscaDados();
-  }, []);
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-  
-    const searching = camisetas.filter(camiseta => {
-      // Verifique se a string de pesquisa está incluída no nome, modelo ou tags.
-      return (
-        camiseta.nome.includes(search) ||
-        camiseta.modelo.includes(search) ||
-        camiseta.tags.includes(search)
-      );
-    });
-    console.log(searching)
-  if(searching.length === 0){
-    alert("Não temos nenhuma camiseta com essa referencia.")
-    setFilteredCamisetas(searching)
-  }
-    setFilteredCamisetas(searching);
-  };
-  
+  // Alterna a exibição da parte das costas
   function show(index: any) {
-    setShowCamisetaCostas((prevCamiseta: any) => {
-      console.log(prevCamiseta, [index]);
-      return {
-        ...prevCamiseta,
-        [index]: !prevCamiseta[index],
-      };
-    });
+    setShowCamisetaCostas((prev: any) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
   }
 
   const handleExpandClick = (index: any) => {
-    setExpanded((prevExpanded: any) => {
-      return {
-        ...prevExpanded,
-        [index]: !prevExpanded[index],
-      };
-    });
+    setExpanded((prev: any) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
   };
 
+  // Remove o item da lista e atualiza o localStorage
+  const removeCamiseta = (index: number) => {
+    const updatedCamisetas = [...camisetas];
+    updatedCamisetas.splice(index, 1);
+    localStorage.setItem("camisetas", JSON.stringify(updatedCamisetas));
+    setCamisetas(updatedCamisetas);
+
+    // Atualiza também a lista filtrada conforme o search atual
+    const updatedFiltered = updatedCamisetas.filter(
+      (camiseta) =>
+        camiseta.nome.toLowerCase().includes(search.toLowerCase()) ||
+        camiseta.modelo.toLowerCase().includes(search.toLowerCase()) ||
+        camiseta.tags.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredCamisetas(updatedFiltered);
+  };
+
+  // Se houver resultados filtrados, exibe-os; caso contrário, exibe todas as camisetas.
+  const listaExibida =
+    filteredCamisetas.length > 0 ? filteredCamisetas : camisetas;
+
+  useEffect(() => {
+    const savedCamisetas = localStorage.getItem("camisetas");
+    if (savedCamisetas) {
+      setCamisetas(JSON.parse(savedCamisetas));
+    }
+  }, []);
+
+  useEffect(() => {
+    const searching = camisetas.filter((camiseta) => {
+      return (
+        camiseta.nome.toLowerCase().includes(search.toLowerCase()) ||
+        camiseta.modelo.toLowerCase().includes(search.toLowerCase()) ||
+        camiseta.tags.toLowerCase().includes(search.toLowerCase())
+      );
+    });
+    setFilteredCamisetas(searching);
+  }, [search, camisetas]);
+
   return (
-    <Box display={"flex"} flexDirection={"column"} alignItems={"center"} width={"100vw"}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      width="100vw"
+    >
       <form>
-        
-      <Box display={"flex"} justifyContent={"center"} alignItems={"center"} padding={"1rem"}>
-            <div >
-              
-            <TextField onChange={(e) => setSearch(e.target.value)} size="small"  id="modelo" label="Search" variant="outlined" />
-            </div>
-            <div style={{paddingLeft:'10px'}} >
-            <Button onClick={handleSubmit} size="medium" variant="contained" endIcon={<SendIcon />}>
-              Search
-            </Button>
-            
-            </div>
-          </Box>
-
-
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          padding="1rem"
+        >
+          <TextField
+            onChange={(e) => setSearch(e.target.value)}
+            size="small"
+            id="modelo"
+            label="Search"
+            variant="outlined"
+          />
+        </Box>
       </form>
-      {/* se filteredCamisetas for maior que zero, else: */}
-      <Box display={"flex"} flexWrap={"wrap"} gap={5} alignItems={"center"} justifyContent={"center"}>
-        {filteredCamisetas.length > 0 ?   filteredCamisetas.map((camiseta, index) => (
-          <Card onMouseEnter={() => show(index)} onMouseLeave={() => show(index)} onClick={() => handleExpandClick(index)} aria-expanded={expanded[index]} key={index} sx={{ width: 610 }}>
-            <div style={{ display: "flex", justifyContent: "center", padding: "60px" }}>
-              <CamisetaFrontal cor={camiseta.cor} estampaFrontal={camiseta.estampaFrontal}></CamisetaFrontal>
-              {showCamisetaCostas[index] && <CamisetaCostas cor={camiseta.cor} estampaFrontal={camiseta.estampaCostas} />}
-            </div>
-
-            <CardHeader title={camiseta.nome} subheader={camiseta.modelo} />
-
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        gap={5}
+        alignItems="center"
+        justifyContent="center"
+      >
+        {listaExibida.map((camiseta, index) => (
+          <Card
+            key={index}
+            onMouseEnter={() => show(index)}
+            onMouseLeave={() => show(index)}
+            onClick={() => handleExpandClick(index)}
+            aria-expanded={expanded[index]}
+            sx={{ width: 610 }}
+          >
+            <CardHeader
+              title={camiseta.nome}
+              subheader={camiseta.modelo}
+              action={
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeCamiseta(index);
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              }
+            />
+            <Box display="flex" justifyContent="center" padding="60px">
+              <Camiseta
+                cor={camiseta.cor}
+                estampa={camiseta.estampaFrontal}
+                tipo="frontal"
+              />
+              {showCamisetaCostas[index] && (
+                <Camiseta
+                  cor={camiseta.cor}
+                  estampa={camiseta.estampaCostas}
+                  tipo="costas"
+                />
+              )}
+            </Box>
             <Collapse in={expanded[index]} timeout="auto" unmountOnExit>
               <CardContent>
-                <Typography paragraph>Detalhes:</Typography>
-                <Typography paragraph>{camiseta.cor}</Typography>
-                <Typography paragraph>{camiseta.estampaFrontal}</Typography>
-                <Typography paragraph>{camiseta.estampaCostas}</Typography>
-                <Typography>{camiseta.tags}</Typography>
+                <Typography paragraph>Color: {camiseta.cor}</Typography>
+                <Typography paragraph>
+                  Front Print: {camiseta.estampaFrontal}
+                </Typography>
+                <Typography paragraph>
+                  Back Print: {camiseta.estampaCostas}
+                </Typography>
+                <Typography>Tags: {camiseta.tags}</Typography>
               </CardContent>
             </Collapse>
           </Card>
-        ))  : camisetas.map((camiseta, index) => (
-          <Card onMouseEnter={() => show(index)} onMouseLeave={() => show(index)} onClick={() => handleExpandClick(index)} aria-expanded={expanded[index]} key={index} sx={{ width: 610 }}>
-            <div style={{ display: "flex", justifyContent: "center", padding: "60px" }}>
-              <CamisetaFrontal cor={camiseta.cor} estampaFrontal={camiseta.estampaFrontal}></CamisetaFrontal>
-              {showCamisetaCostas[index] && <CamisetaCostas cor={camiseta.cor} estampaFrontal={camiseta.estampaCostas} />}
-            </div>
-
-            <CardHeader title={camiseta.nome} subheader={camiseta.modelo} />
-
-            <Collapse in={expanded[index]} timeout="auto" unmountOnExit>
-              <CardContent>
-                <Typography paragraph>Detalhes:</Typography>
-                <Typography paragraph>{camiseta.cor}</Typography>
-                <Typography paragraph>{camiseta.estampaFrontal}</Typography>
-                <Typography paragraph>{camiseta.estampaCostas}</Typography>
-                <Typography>{camiseta.tags}</Typography>
-              </CardContent>
-            </Collapse>
-          </Card>
-        )) }
+        ))}
       </Box>
     </Box>
   );
 }
-
 
 export default List;

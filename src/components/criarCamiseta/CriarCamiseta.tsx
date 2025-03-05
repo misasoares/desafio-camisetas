@@ -1,17 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@mui/material";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import SendIcon from "@mui/icons-material/Send";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import { Box, Button, Grid, TextField } from "@mui/material";
 import { useState } from "react";
-import { create } from "../../config/services/camiseta.service";
 import "../../style.css";
 
-import CamisetaFrontal from "../camiseta/CamisetaFrontal";
-import CamisetaCostas from "../camiseta/CamisetaCostas";
+import Camiseta from "../camiseta/Camiseta";
 
 function CriarCamiseta() {
-  const [backgroundColor, setBackgroundColor] = useState("#fffffff");
+  const [backgroundColor, setBackgroundColor] = useState("#ffffff");
 
   const [camiseta, setCamiseta] = useState({
     nome: "",
@@ -23,53 +18,154 @@ function CriarCamiseta() {
   });
 
   const handleSubmit = async () => {
-    const resposta = await create(camiseta);
-
-    console.log(resposta);
-    
+    const savedCamisetas = localStorage.getItem("camisetas");
+    const camisetasArray = savedCamisetas ? JSON.parse(savedCamisetas) : [];
+    camisetasArray.push(camiseta);
+    localStorage.setItem("camisetas", JSON.stringify(camisetasArray));
+    console.log("Camiseta salva:", camiseta);
   };
 
   return (
-    <Box display={"flex"} justifyContent={"center"} flexDirection={"column"} alignItems={"center"}>
-      
-      <Box
-        component="form"
-        sx={{
-          "& .MuiTextField-root": { m: 1, width: "25ch" },
-        }}
-        noValidate
-        autoComplete="off"
-      >
-        <Box style={{ border: "solid 1px gray", borderRadius: "10px" }} display={"flex"} justifyContent={"center"} alignItems={"center"} padding={"3rem"} gap={5}>
-          <CamisetaFrontal cor={backgroundColor} estampaFrontal={camiseta.estampaFrontal}></CamisetaFrontal>
-          <CamisetaCostas cor={backgroundColor} estampaFrontal={camiseta.estampaCostas}></CamisetaCostas>
+    <Grid
+      container
+      spacing={4}
+      justifyContent="center"
+      alignItems="center"
+      style={{ marginTop: "1rem" }}
+    >
+      <Grid item xs={12} sm={10} md={8}>
+        <Box
+          sx={{
+            border: "1px solid gray",
+            borderRadius: "10px",
+            p: 3,
+            width: "100%",
+            maxWidth: "900px",
+            mx: "auto",
+          }}
+        >
+          <Grid
+            container
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Grid item xs={12} sm={6}>
+              <Camiseta
+                cor={backgroundColor}
+                estampa={camiseta.estampaFrontal}
+                tipo="frontal"
+                isCreating
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Camiseta
+                cor={backgroundColor}
+                estampa={camiseta.estampaCostas}
+                tipo="costas"
+                isCreating
+              />
+            </Grid>
+          </Grid>
         </Box>
+      </Grid>
 
-        <form>
-          <Box display={"flex"} justifyContent={"center"} alignItems={"center"} paddingTop={"1rem"}>
-            <TextField onChange={(e) => setCamiseta({ ...camiseta, nome: e.target.value })} id="nome" label="Nome" variant="outlined" />
-            <TextField
-              onChange={(e) => {
-                setCamiseta({ ...camiseta, cor: e.target.value });
-                setBackgroundColor(e.target.value);
-              }}
-              id="cor"
-              label="Cor"
-              variant="outlined"
-              type="color"
-            />
-
-            <TextField onChange={(e) => setCamiseta({ ...camiseta, modelo: e.target.value })} id="modelo" label="Modelo" variant="outlined" />
-            <TextField onChange={(e) => setCamiseta({ ...camiseta, estampaFrontal: e.target.value })} id="estampaFrontal" label="Estampa frontal" variant="outlined" />
-            <TextField onChange={(e) => setCamiseta({ ...camiseta, estampaCostas: e.target.value })} id="estampaCostas" label="Estampa costas" variant="outlined" />
-            <TextField onChange={(e) => setCamiseta({ ...camiseta, tags: e.target.value })} id="tags" label="Tags" variant="outlined" />
-            <Button onClick={handleSubmit} variant="contained" endIcon={<SendIcon />}>
-              Enviar
-            </Button>
-          </Box>
-        </form>
-      </Box>
-    </Box>
+      <Grid item xs={12} sm={10} md={8}>
+        <Box component="form" noValidate autoComplete="off">
+          <Grid
+            container
+            spacing={2}
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Grid item xs={12} sm={6}>
+              <TextField
+                onChange={(e) =>
+                  setCamiseta({ ...camiseta, nome: e.target.value })
+                }
+                id="nome"
+                label="Name"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                onChange={(e) => {
+                  setCamiseta({ ...camiseta, cor: e.target.value });
+                  setBackgroundColor(e.target.value);
+                }}
+                id="cor"
+                label="Color"
+                variant="outlined"
+                type="color"
+                fullWidth
+                defaultValue="#ffffff"
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                onChange={(e) =>
+                  setCamiseta({ ...camiseta, modelo: e.target.value })
+                }
+                id="modelo"
+                label="Model"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                onChange={(e) =>
+                  setCamiseta({ ...camiseta, estampaFrontal: e.target.value })
+                }
+                id="estampaFrontal"
+                label="Front Print"
+                placeholder="URL"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                onChange={(e) =>
+                  setCamiseta({ ...camiseta, estampaCostas: e.target.value })
+                }
+                id="estampaCostas"
+                label="Back Print"
+                placeholder="URL"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                onChange={(e) =>
+                  setCamiseta({ ...camiseta, tags: e.target.value })
+                }
+                id="tags"
+                label="Tags"
+                variant="outlined"
+                fullWidth
+              />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              style={{ textAlign: "center", marginTop: "1rem" }}
+            >
+              <Button
+                onClick={handleSubmit}
+                variant="contained"
+                endIcon={<SaveAltIcon />}
+              >
+                Save
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }
 
